@@ -149,7 +149,6 @@ h2{font-size:clamp(34px,4.6vw,58px);font-weight:800;letter-spacing:-.035em;line-
 .bcell .ic{width:48px;height:48px;border-radius:14px;background:var(--accent-soft);border:1px solid rgba(16,185,129,.3);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:22px}
 .bcell h3{font-size:18px;font-weight:700;letter-spacing:-.02em;margin-bottom:10px}
 .bcell p{font-size:14px;color:var(--muted);line-height:1.65}
-.offline-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-top:20px}
 .gguf-mock{background:var(--glass);border:1px solid var(--border);border-radius:22px;padding:30px;backdrop-filter:blur(14px)}
 .gguf-row{display:flex;align-items:center;gap:14px;padding:15px 16px;border:1px solid var(--border);border-radius:14px;margin-bottom:12px;background:rgba(255,255,255,.015)}
 .gguf-row .fi{width:40px;height:40px;border-radius:11px;background:var(--accent-soft);border:1px solid rgba(16,185,129,.3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
@@ -209,7 +208,7 @@ footer{border-top:1px solid var(--border);padding:60px 0 40px;margin-top:110px}
 .foot-links a:hover{color:#fff}
 .copyright{margin-top:48px;padding-top:24px;border-top:1px solid var(--border);font-size:12.5px;color:var(--faint);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
 @media(max-width:900px){
-  .vs,.anchor-grid,.offline-grid,.price-grid{grid-template-columns:1fr}
+  .vs,.anchor-grid,.price-grid{grid-template-columns:1fr}
   .bento{grid-template-columns:1fr 1fr}
   .bcell.big{grid-column:span 2}
   .steps{grid-template-columns:1fr}
@@ -241,7 +240,6 @@ footer{border-top:1px solid var(--border);padding:60px 0 40px;margin-top:110px}
     <div class="nav-links">
       <a href="#cloud">LazySiren Cloud</a>
       <a href="#os">The OS</a>
-      <a href="#offline">Offline</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
     </div>
@@ -398,7 +396,6 @@ footer{border-top:1px solid var(--border);padding:60px 0 40px;margin-top:110px}
           <li><i>✓</i> 2M tokens/week — the $40 habit, on us</li>
           <li><i>✓</i> Fresh 2M every Monday, automatically</li>
           <li><i>✓</i> The full OS + 61 apps included</li>
-          <li><i>✓</i> Offline AI model included free, forever</li>
         </ul>
       </div>
     </div>
@@ -421,30 +418,6 @@ footer{border-top:1px solid var(--border);padding:60px 0 40px;margin-top:110px}
       <div class="bcell rv d2"><div class="ic">🏪</div><h3>App marketplace</h3><p>Publish what Siren builds for you. Others install it in one click.</p></div>
       <div class="bcell big rv"><div class="ic">📱</div><h3>One account, every screen</h3><p>Web, Android APK, desktop shell — your OS, your files, your Siren, everywhere. Your quota and your keys follow the account, never the device.</p></div>
       <div class="bcell rv d1"><div class="ic">🔒</div><h3>Private by architecture</h3><p>Your data is yours. Encrypted vault, explicit permissions, nothing sold — because there's nothing to sell when the product is the OS itself.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ OFFLINE ═══ -->
-<section id="offline" style="padding-top:40px">
-  <div class="wrap">
-    <div class="offline-grid">
-      <div class="rv">
-        <span class="free-tag">Free · forever</span>
-        <h2>Your offline brain.<br>No cloud. No quota.<br>No bill. Ever.</h2>
-        <p class="lead">Airplane mode? No signal? Don't care. <b>Download an open model once</b> in Model Manager and Siren thinks entirely on your device.</p>
-        <ul class="check-list">
-          <li><i>✓</i> <span><b>Truly free</b> — offline inference costs us nothing, so it costs you nothing</span></li>
-          <li><i>✓</i> <span><b>Private by physics</b> — nothing leaves the device, because nothing can</span></li>
-          <li><i>✓</i> <span><b>Yours to keep</b> — the model file is on your disk, not our servers</span></li>
-        </ul>
-      </div>
-      <div class="gguf-mock rv d1">
-        <div class="gguf-row"><div class="fi">🧠</div><div class="fn">Bonsai-1.7B <div class="fs">Q1_0 · 1.2 GB</div></div><span class="dl">Get</span></div>
-        <div class="gguf-row"><div class="fi">🧠</div><div class="fn">Fractus-CTE <div class="fs">experimental · 2.1 GB</div></div><span class="dl">Get</span></div>
-        <div class="gguf-row"><div class="fi">🧠</div><div class="fn">ATOM-fr <div class="fs">francophone · 980 MB</div></div><span class="dl">Get</span></div>
-        <p style="font-size:12px;color:var(--faint);margin-top:16px;text-align:center">Model Manager · one tap to download · runs on-device</p>
-      </div>
     </div>
   </div>
 </section>
@@ -481,7 +454,6 @@ footer{border-top:1px solid var(--border);padding:60px 0 40px;margin-top:110px}
           <li><i>✓</i> <span><b>2M tokens/week</b> on LazySiren Cloud</span></li>
           <li><i>✓</i> <span><b>Fresh 2M every Monday</b> — automatic refill</span></li>
           <li><i>✓</i> <span>Full OS + <b>61 apps</b> + marketplace publishing</span></li>
-          <li><i>✓</i> <span><b>Offline AI</b> free forever via Model Manager</span></li>
           <li><i>✓</i> <span>No credit card · no API key · cancel never (it's free)</span></li>
         </ul>
         <a class="btn btn-acc btn-lg" href="https://lazysiren.com" style="width:100%;justify-content:center">Claim beta access →</a>
@@ -508,9 +480,8 @@ footer{border-top:1px solid var(--border);padding:60px 0 40px;margin-top:110px}
     </div>
     <div class="faq">
       <div class="faq-item rv"><button class="faq-q">What does "2M tokens a week" actually mean?<span class="x">+</span></button><div class="faq-a"><p>About <b>1.5 million words a week</b> — roughly a novel, every single week. A fresh <b>2M tokens lands every Monday</b>, automatically. Generous usage for all users during beta — no tiers, no gates.</p></div></div>
-      <div class="faq-item rv"><button class="faq-q">Do I need an API key from OpenAI or anyone else?<span class="x">+</span></button><div class="faq-a"><p><b>No.</b> LazySiren Cloud is the built-in brain — funded by us, ready the second you sign in. There is nothing to configure and no key to paste. (Custom provider keys exist, but they're reserved for the admin account.)</p></div></div>
+      <div class="faq-item rv"><button class="faq-q">Do I need an API key from OpenAI or anyone else?<span class="x">+</span></button><div class="faq-a"><p><b>No.</b> LazySiren Cloud is the built-in brain — funded by us, ready the second you sign in. There is nothing to configure and no key to paste.</p></div></div>
       <div class="faq-item rv"><button class="faq-q">What happens when beta ends?<span class="x">+</span></button><div class="faq-a"><p>Beta members keep <b>founding terms</b>. Everyone else moves to the published plans — the same quotas you see above, priced honestly. No surprise bills: if you never add a card, you simply stay on the free Discovery tier.</p></div></div>
-      <div class="faq-item rv"><button class="faq-q">Is the offline AI really free forever?<span class="x">+</span></button><div class="faq-a"><p><b>Yes.</b> Offline models run entirely on your device — they cost us nothing to serve, so they cost you nothing. Download once in Model Manager, use forever, even in airplane mode.</p></div></div>
       <div class="faq-item rv"><button class="faq-q">What can Siren actually do inside the OS?<span class="x">+</span></button><div class="faq-a"><p>She operates the machine: <b>builds and publishes apps</b> from a sentence (Neural Forge), <b>reads your files</b> (drop a 40-page PDF), <b>runs your real Linux terminal</b>, manages windows, and remembers context across all 61 apps. A chatbot answers questions. Siren does the work.</p></div></div>
       <div class="faq-item rv"><button class="faq-q">Which devices are supported?<span class="x">+</span></button><div class="faq-a"><p><b>Web</b> (any modern browser), <b>Android</b> (native APK), and desktop shell. One account — your OS, files, quota and Siren follow you everywhere.</p></div></div>
     </div>
@@ -541,7 +512,7 @@ footer{border-top:1px solid var(--border);padding:60px 0 40px;margin-top:110px}
         <p>The AI-native operating system. The OS is the AI.</p>
       </div>
       <div class="foot-links">
-        <div><b>Product</b><a href="#cloud">LazySiren Cloud</a><a href="#os">The OS</a><a href="#offline">Offline AI</a><a href="#pricing">Pricing</a></div>
+        <div><b>Product</b><a href="#cloud">LazySiren Cloud</a><a href="#os">The OS</a><a href="#pricing">Pricing</a></div>
         <div><b>Get it</b><a href="https://lazysiren.com">Launch app</a><a href="https://lazysiren.com/lazysiren.apk">Android APK</a><a href="#faq">FAQ</a></div>
         <div><b>Company</b><a href="https://lazysiren.com">Palier Labs</a><a href="https://lazysiren.com">Contact</a></div>
       </div>
