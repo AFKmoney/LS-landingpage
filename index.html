@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LazySiren — The OS that is the AI</title>
+<meta name="description" content="LazySiren is a browser-native operating system where the AI is the operator. Powered by LazySiren Cloud.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#050508;
+    --bg-soft:#0a0a0f;
+    --accent:#10b981;
+    --accent-rgb:16,185,129;
+    --accent-dim:rgba(16,185,129,.12);
+    --text:#f1f5f9;
+    --muted:#94a3b8;
+    --muted-2:#64748b;
+    --glass:rgba(255,255,255,.035);
+    --glass-border:rgba(255,255,255,.08);
+    --radius:22px;
+    --ease:cubic-bezier(.22,1,.36,1);
+    --spring:cubic-bezier(.32,.72,0,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    line-height:1.6;
+  }
+  ::selection{background:rgba(16,185,129,.3)}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+
+  /* ── Nav ─────────────────────────────── */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    backdrop-filter:blur(20px) saturate(1.4);
+    -webkit-backdrop-filter:blur(20px) saturate(1.4);
+    background:rgba(5,5,8,.62);
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .nav-inner{max-width:1180px;margin:0 auto;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:-.01em;text-decoration:none;color:var(--text)}
+  .brand svg{display:block}
+  .brand small{font-weight:500;font-size:11px;color:var(--muted-2);letter-spacing:.14em;text-transform:uppercase;border-left:1px solid rgba(255,255,255,.12);padding-left:10px;margin-left:2px}
+  .nav-links{display:flex;gap:30px;align-items:center}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+  .nav-links a:hover{color:var(--text)}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--accent);color:#04110b;
+    font-weight:700;font-size:14px;
+    padding:11px 22px;border-radius:999px;border:none;cursor:pointer;
+    text-decoration:none;transition:transform .25s var(--spring),box-shadow .25s;
+    box-shadow:0 0 0 1px rgba(16,185,129,.4),0 8px 28px rgba(16,185,129,.28);
+    white-space:nowrap;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(16,185,129,.6),0 14px 40px rgba(16,185,129,.38)}
+  .btn-ghost{
+    background:var(--glass);color:var(--text);
+    border:1px solid var(--glass-border);
+    box-shadow:none;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  }
+  .btn-ghost:hover{box-shadow:0 8px 28px rgba(0,0,0,.4);border-color:rgba(255,255,255,.16)}
+  .btn-sm{padding:9px 18px;font-size:13px}
+  @media(max-width:860px){.nav-links a{display:none}.nav-links a.btn-sm{display:inline-flex}}
+
+  /* ── Hero ────────────────────────────── */
+  .hero{position:relative;padding:172px 0 90px;text-align:center;overflow:hidden}
+  .hero-glow{
+    position:absolute;top:-320px;left:50%;transform:translateX(-50%);
+    width:900px;height:640px;pointer-events:none;
+    background:radial-gradient(ellipse at center,rgba(16,185,129,.14),transparent 65%);
+    filter:blur(10px);
+  }
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;font-weight:600;letter-spacing:.06em;
+    color:var(--accent);background:var(--accent-dim);
+    border:1px solid rgba(16,185,129,.25);
+    padding:7px 16px;border-radius:999px;margin-bottom:28px;
+  }
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:pulse 2.2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  h1{
+    font-size:clamp(44px,7vw,84px);font-weight:800;letter-spacing:-.035em;line-height:1.04;
+    max-width:900px;margin:0 auto 26px;
+  }
+  h1 .grad{
+    background:linear-gradient(100deg,#34d399,#10b981 45%,#6ee7b7);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .lede{font-size:clamp(17px,2.2vw,21px);color:var(--muted);max-width:660px;margin:0 auto 40px;line-height:1.65}
+  .lede strong{color:var(--text);font-weight:600}
+  .hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:70px}
+  .btn-lg{padding:15px 32px;font-size:15.5px}
+  #wave{width:100%;height:120px;display:block;opacity:.9}
+
+  /* OS mockup */
+  .mock-shell{max-width:1020px;margin:26px auto 0;position:relative}
+  .mock{
+    border-radius:18px;overflow:hidden;position:relative;
+    background:#0b0b10;
+    border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 0 0 .5px rgba(255,255,255,.14),0 30px 90px rgba(0,0,0,.6),0 0 120px rgba(16,185,129,.07);
+  }
+  .mock-bar{display:flex;align-items:center;gap:8px;padding:13px 18px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06)}
+  .mock-bar i{width:11px;height:11px;border-radius:50%;display:block}
+  .mock-bar i:nth-child(1){background:#ff5f57}.mock-bar i:nth-child(2){background:#febc2e}.mock-bar i:nth-child(3){background:#28c840}
+  .mock-url{margin-left:12px;flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);border-radius:8px;font-size:12px;color:var(--muted);padding:5px 14px;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:8px}
+  .mock-url b{color:var(--accent);font-weight:500}
+  .mock-screen{position:relative;aspect-ratio:16/9.4;background:
+    radial-gradient(1000px 500px at 70% -10%,rgba(16,185,129,.12),transparent 60%),
+    radial-gradient(800px 500px at 15% 110%,rgba(16,185,129,.08),transparent 60%),
+    #07070b;}
+  .mock-desktop{position:absolute;inset:0;padding:26px;display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:min-content;gap:18px;align-content:start}
+  .dicon{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .dicon .glyph{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;
+    background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.1);box-shadow:0 6px 18px rgba(0,0,0,.4)}
+  .dicon span{font-size:10.5px;color:#cbd5e1}
+  .mock-window{
+    position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);
+    width:min(560px,86%);background:rgba(13,13,18,.92);
+    border:1px solid rgba(255,255,255,.12);border-radius:14px;
+    box-shadow:0 24px 70px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    overflow:hidden;text-align:left;
+  }
+  .mock-winbar{display:flex;align-items:center;gap:8px;padding:11px 15px;border-bottom:1px solid rgba(255,255,255,.07);font-size:12.5px;font-weight:600}
+  .mock-winbar .siren-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+  .mock-chat{padding:18px;font-size:13.5px;display:flex;flex-direction:column;gap:12px}
+  .bubble{max-width:85%;padding:10px 14px;border-radius:14px;line-height:1.55}
+  .bubble.user{align-self:flex-end;background:rgba(16,185,129,.16);border:1px solid rgba(16,185,129,.3)}
+  .bubble.siren{align-self:flex-start;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)}
+  .bubble.siren b{color:var(--accent)}
+  .typing{display:inline-flex;gap:4px;padding:4px 2px}
+  .typing i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:tp 1.2s infinite}
+  .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+  @keyframes tp{0%,60%,100%{transform:none;opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+  .mock-taskbar{position:absolute;bottom:0;left:0;right:0;height:46px;display:flex;align-items:center;justify-content:center;gap:10px;
+    background:rgba(10,10,14,.72);border-top:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+  .mock-taskbar .t{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:15px}
+  .mock-taskbar .t.active{background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.4)}
+  .hero-note{margin-top:22px;font-size:13px;color:var(--muted-2)}
+  .hero-note b{color:var(--muted);font-weight:600}
+
+  /* ── Stats band ──────────────────────── */
+  .stats{border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.012)}
+  .stats-inner{display:grid;grid-template-columns:repeat(4,1fr);max-width:1180px;margin:0 auto;padding:44px 28px;gap:20px;text-align:center}
+  .stat b{display:block;font-size:34px;font-weight:800;letter-spacing:-.03em;color:var(--text)}
+  .stat b em{font-style:normal;color:var(--accent)}
+  .stat span{font-size:13.5px;color:var(--muted)}
+  @media(max-width:700px){.stats-inner{grid-template-columns:repeat(2,1fr);gap:30px}}
+
+  /* ── Sections ────────────────────────── */
+  section.block{padding:130px 0;position:relative}
+  .kicker{font-size:12.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;display:flex;align-items:center;gap:12px}
+  .kicker::before{content:"";width:28px;height:2px;background:var(--accent);border-radius:2px;display:inline-block}
+  .center{text-align:center}.center .kicker{justify-content:center}.center .kicker::before{display:none}
+  h2{font-size:clamp(32px,4.6vw,54px);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:20px;max-width:760px}
+  .center h2{margin-left:auto;margin-right:auto}
+  .sub{font-size:18px;color:var(--muted);max-width:640px;line-height:1.7;margin-bottom:0}
+  .center .sub{margin-left:auto;margin-right:auto}
+
+  /* Cloud panel */
+  .cloud-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:26px;margin-top:64px;align-items:stretch}
+  @media(max-width:900px){.cloud-grid{grid-template-columns:1fr}}
+  .card{
+    background:linear-gradient(160deg,rgba(255,255,255,.055),rgba(255,255,255,.015));
+    border:1px solid var(--glass-border);border-radius:var(--radius);
+    padding:38px;position:relative;overflow:hidden;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 20px 60px rgba(0,0,0,.35);
+  }
+  .card h3{font-size:21px;font-weight:700;letter-spacing:-.02em;margin-bottom:12px}
+  .card p{color:var(--muted);font-size:15.5px;line-height:1.7}
+  .card p+p{margin-top:12px}
+  .cloud-feature{display:flex;gap:16px;margin-top:22px;align-items:flex-start}
+  .cloud-feature .ic{flex:none;width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:19px;
+    background:var(--accent-dim);border:1px solid rgba(16,185,129,.3)}
+  .cloud-feature b{display:block;font-size:15px;margin-bottom:3px}
+  .cloud-feature span{font-size:14px;color:var(--muted);line-height:1.6}
+  .quota{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}
+  .quota th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted-2);padding:12px 10px;border-bottom:1px solid rgba(255,255,255,.08);font-weight:700}
+  .quota td{padding:13px 10px;border-bottom:1px solid rgba(255,255,255,.045);color:#cbd5e1}
+  .quota tr:last-child td{border-bottom:none}
+  .quota td.plan{font-weight:700;color:var(--text);white-space:nowrap}
+  .quota td.price{color:var(--accent);font-weight:700;white-space:nowrap}
+  .quota tr.hl td{background:rgba(16,185,129,.06)}
+  .quota-note{font-size:12.5px;color:var(--muted-2);margin-top:14px;line-height:1.6}
+
+  /* Bento */
+  .bento{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:64px}
+  @media(max-width:900px){.bento{grid-template-columns:1fr}}
+  .bento .card{padding:34px;transition:transform .35s var(--spring),border-color .3s}
+  .bento .card:hover{transform:translateY(-5px);border-color:rgba(16,185,129,.3)}
+  .bento .ic{width:48px;height:48px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px;
+    background:linear-gradient(145deg,rgba(16,185,129,.18),rgba(16,185,129,.05));border:1px solid rgba(16,185,129,.28)}
+  .bento h3{font-size:18px}
+  .bento .span2{grid-column:span 2}
+  @media(max-width:900px){.bento .span2{grid-column:span 1}}
+  .code{background:#08080c;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:18px 20px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.8;color:#a7f3d0;margin-top:18px;overflow-x:auto}
+  .code .c{color:#5b6b7f}.code .k{color:#34d399}.code .s{color:#e2e8f0}
+
+  /* Apps */
+  .apps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:60px}
+  @media(max-width:900px){.apps-grid{grid-template-columns:repeat(2,1fr)}}
+  .app{
+    background:var(--glass);border:1px solid var(--glass-border);border-radius:18px;padding:26px 22px;
+    transition:transform .3s var(--spring),border-color .3s,background .3s;
+  }
+  .app:hover{transform:translateY(-4px);border-color:rgba(16,185,129,.35);background:rgba(255,255,255,.05)}
+  .app .glyph{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:16px;
+    background:linear-gradient(145deg,rgba(255,255,255,.1),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1)}
+  .app b{display:block;font-size:15px;margin-bottom:5px;letter-spacing:-.01em}
+  .app span{font-size:13px;color:var(--muted);line-height:1.55;display:block}
+  .apps-more{margin-top:26px;text-align:center;font-size:14px;color:var(--muted-2)}
+
+  /* Steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:64px;counter-reset:step}
+  @media(max-width:900px){.steps{grid-template-columns:1fr}}
+  .step{position:relative;padding:36px 32px}
+  .step .n{font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.18em;margin-bottom:14px}
+  .step h3{font-size:19px;margin-bottom:10px;letter-spacing:-.01em}
+
+  /* Plans */
+  .plans{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:64px;align-items:stretch}
+  @media(max-width:1100px){.plans{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.plans{grid-template-columns:1fr}}
+  .plan{padding:30px 26px;display:flex;flex-direction:column;position:relative}
+  .plan.featured{border-color:rgba(16,185,129,.45);background:linear-gradient(165deg,rgba(16,185,129,.1),rgba(255,255,255,.02));box-shadow:0 20px 60px rgba(16,185,129,.1)}
+  .plan .tag{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--accent);color:#04110b;font-size:11px;font-weight:800;letter-spacing:.08em;padding:4px 14px;border-radius:999px;text-transform:uppercase;white-space:nowrap}
+  .plan h3{font-size:16px;margin-bottom:4px}
+  .plan .p{font-size:30px;font-weight:800;letter-spacing:-.03em;margin:8px 0 2px}
+  .plan .p small{font-size:13px;font-weight:500;color:var(--muted)}
+  .plan ul{list-style:none;margin:20px 0 26px;flex:1}
+  .plan li{font-size:13.5px;color:var(--muted);padding:7px 0 7px 26px;position:relative;line-height:1.5}
+  .plan li::before{content:"✓";position:absolute;left:2px;color:var(--accent);font-weight:700}
+  .plan .btn{justify-content:center}
+
+  /* FAQ */
+  .faq{max-width:760px;margin:56px auto 0}
+  .qa{border-bottom:1px solid rgba(255,255,255,.07)}
+  .qa button{width:100%;background:none;border:none;color:var(--text);font-family:inherit;font-size:16.5px;font-weight:600;text-align:left;
+    padding:24px 8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;letter-spacing:-.01em}
+  .qa button .x{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;
+    font-size:16px;color:var(--muted);transition:transform .3s var(--spring),background .3s}
+  .qa.open button .x{transform:rotate(45deg);background:var(--accent-dim);color:var(--accent);border-color:rgba(16,185,129,.4)}
+  .qa .a{max-height:0;overflow:hidden;transition:max-height .45s var(--ease)}
+  .qa .a p{padding:0 8px 26px;color:var(--muted);font-size:15px;line-height:1.75;max-width:660px}
+
+  /* Final CTA */
+  .final{margin:40px 0 130px}
+  .final-card{
+    position:relative;overflow:hidden;text-align:center;
+    border-radius:32px;padding:100px 40px;
+    background:radial-gradient(700px 340px at 50% -60px,rgba(16,185,129,.18),transparent 70%),linear-gradient(165deg,rgba(255,255,255,.06),rgba(255,255,255,.015));
+    border:1px solid rgba(16,185,129,.25);
+    box-shadow:0 30px 90px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  .final-card h2{margin-left:auto;margin-right:auto}
+  .final-card .hero-cta{margin:36px 0 0}
+
+  footer{border-top:1px solid rgba(255,255,255,.06);padding:56px 0 40px}
+  .foot{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap}
+  .foot .brand{margin-bottom:14px}
+  .foot p{font-size:13px;color:var(--muted-2);max-width:320px;line-height:1.7}
+  .foot nav2{display:flex;gap:60px}
+  .fcol b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted-2);margin-bottom:16px;font-weight:700}
+  .fcol a{display:block;color:var(--muted);text-decoration:none;font-size:14px;margin-bottom:10px;transition:color .2s}
+  .fcol a:hover{color:var(--text)}
+  .copy{margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted-2);flex-wrap:wrap;gap:10px}
+
+  /* Reveal */
+  .rv{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+  .rv.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}#wave{display:none}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="#">
+      <svg width="26" height="26" viewBox="0 0 100 100" fill="none">
+        <path id="navWave" d="M50 12 C 30 26, 70 34, 50 48 C 30 62, 70 70, 50 88" stroke="#10b981" stroke-width="9" stroke-linecap="round"/>
+      </svg>
+      LazySiren <small>Palier&nbsp;Labs</small>
+    </a>
+    <div class="nav-links">
+      <a href="#cloud">LazySiren Cloud</a>
+      <a href="#os">The OS</a>
+      <a href="#apps">Apps</a>
+      <a href="#plans">Plans</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn btn-sm" href="https://lazysiren.com">Enter LazySiren</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════ HERO ══════════ -->
+<header class="hero">
+  <div class="hero-glow"></div>
+  <div class="wrap">
+    <div class="pill rv"><span class="dot"></span>LAZYSIREN CLOUD&nbsp;·&nbsp;LIVE FOR EVERY ACCOUNT</div>
+    <h1 class="rv">The OS <span class="grad">is</span> the AI.</h1>
+    <p class="lede rv">LazySiren is a complete operating system that lives in your browser. <strong>It boots in a tab</strong> — a full desktop with windows, files and 60+ apps — and the AI doesn't assist you from a sidebar. <strong>It operates the machine.</strong></p>
+    <div class="hero-cta rv">
+      <a class="btn btn-lg" href="https://lazysiren.com">Enter LazySiren →</a>
+      <a class="btn btn-ghost btn-lg" href="#cloud">What is LazySiren Cloud?</a>
+    </div>
+
+    <div class="mock-shell rv">
+      <div class="mock">
+        <div class="mock-bar"><i></i><i></i><i></i><div class="mock-url"><b>⌁</b> lazysiren.com</div></div>
+        <div class="mock-screen">
+          <div class="mock-desktop">
+            <div class="dicon"><div class="glyph">🧠</div><span>HyperIDE</span></div>
+            <div class="dicon"><div class="glyph">⚒️</div><span>Forge</span></div>
+            <div class="dicon"><div class="glyph">🌐</div><span>NetRunner</span></div>
+            <div class="dicon"><div class="glyph">🔐</div><span>Vault</span></div>
+            <div class="dicon"><div class="glyph">🎨</div><span>RenderWave</span></div>
+            <div class="dicon"><div class="glyph">💬</div><span>Siren</span></div>
+          </div>
+          <div class="mock-window">
+            <div class="mock-winbar"><span class="siren-dot"></span>Siren — LazySiren Cloud</div>
+            <div class="mock-chat">
+              <div class="bubble user">Build me a portfolio site with a dark hero and a contact form.</div>
+              <div class="bubble siren"><b>Siren</b> · Done. I forged <b>Portfolio</b>, wrote 4 files, and placed it on your desktop. Open it whenever you're ready.</div>
+              <div class="bubble siren"><span class="typing"><i></i><i></i><i></i></span></div>
+            </div>
+          </div>
+          <div class="mock-taskbar"><div class="t">⌁</div><div class="t active">💬</div><div class="t">📁</div><div class="t">⚙️</div></div>
+        </div>
+      </div>
+    </div>
+    <p class="hero-note rv">No install. No tab-switching. <b>Your computer, operated by intelligence.</b></p>
+    <canvas id="wave"></canvas>
+  </div>
+</header>
+
+<!-- ══════════ STATS ══════════ -->
+<div class="stats">
+  <div class="stats-inner">
+    <div class="stat rv"><b>60<em>+</em></b><span>apps ship with the OS</span></div>
+    <div class="stat rv"><b>14<em>+</em></b><span>AI providers, bring your own key</span></div>
+    <div class="stat rv"><b>0<em>&nbsp;KB</em></b><span>to install — it boots in a tab</span></div>
+    <div class="stat rv"><b>1<em>&nbsp;account</em></b><span>your AI follows you everywhere</span></div>
+  </div>
+</div>
+
+<!-- ══════════ LAZYSIREN CLOUD ══════════ -->
+<section class="block" id="cloud">
+  <div class="wrap">
+    <div class="kicker rv">LazySiren Cloud</div>
+    <h2 class="rv">House AI, included.<br>Yours on every device.</h2>
+    <p class="sub rv">Every LazySiren account comes with <strong style="color:var(--text)">LazySiren Cloud</strong> — our hosted intelligence, ready the second you sign in. No API key to hunt down, no setup screen. Siren answers, codes, forges apps and operates your OS from the cloud, on your phone, your laptop, anywhere you log in.</p>
+
+    <div class="cloud-grid">
+      <div class="card rv">
+        <h3>How it works</h3>
+        <p>LazySiren Cloud is a subsidized house model served from our own endpoint. Your plan sets your budget — messages and tokens per week — and everything is metered transparently in your account panel.</p>
+        <div class="cloud-feature">
+          <div class="ic">⚡</div>
+          <div><b>Instant, everywhere</b><span>Sign in on any device and Siren is there with your memory, your keys, your workspace. Nothing to configure.</span></div>
+        </div>
+        <div class="cloud-feature">
+          <div class="ic">🔑</div>
+          <div><b>Bring your own key, or don't</b><span>Prefer OpenAI, Anthropic, Gemini or 11 others? Plug your key in and Siren routes to it. Keys are encrypted per-account and follow you across devices.</span></div>
+        </div>
+        <div class="cloud-feature">
+          <div class="ic">🛡️</div>
+          <div><b>Governed by design</b><span>Deny-by-default action policy: Siren asks before anything irreversible. Staged writes, approvals, and a full decision log you can audit.</span></div>
+        </div>
+      </div>
+      <div class="card rv">
+        <h3>Cloud quotas by plan</h3>
+        <p style="margin-bottom:6px">Every plan includes LazySiren Cloud. Higher plans raise your weekly budget.</p>
+        <table class="quota">
+          <tr><th>Plan</th><th>Price</th><th>Messages / week</th></tr>
+          <tr><td class="plan">Discovery</td><td class="price">Free</td><td>10M tokens / month</td></tr>
+          <tr class="hl"><td class="plan">Starter</td><td class="price">$9.99</td><td>500 messages</td></tr>
+          <tr><td class="plan">Plus</td><td class="price">$19.99</td><td>2,000 messages</td></tr>
+          <tr><td class="plan">Max</td><td class="price">$49.99</td><td>7,000 messages</td></tr>
+          <tr><td class="plan">Ultra</td><td class="price">$100</td><td>Unlimited · fair use</td></tr>
+        </table>
+        <p class="quota-note">Token caps sit behind the message counts as a cost safety net. Ultra is soft-capped at 50M tokens/week under written fair use. Quotas reset weekly (monthly on Discovery).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ THE OS ══════════ -->
+<section class="block" id="os" style="padding-top:40px">
+  <div class="wrap">
+    <div class="kicker rv">The operating system</div>
+    <h2 class="rv">Not a chatbot.<br>A machine that listens.</h2>
+    <p class="sub rv">A chatbot answers in a box. LazySiren <strong style="color:var(--text)">is the environment</strong> — windows, files, apps, a terminal, a desktop. The model doesn't suggest actions. It takes them, where you can see them.</p>
+
+    <div class="bento">
+      <div class="card rv">
+        <div class="ic">⌁</div>
+        <h3>Siren operates the OS</h3>
+        <p>Tell Siren what you want. She opens apps, edits files, writes code, runs commands and organizes your workspace — narrating as she goes, asking before anything destructive.</p>
+      </div>
+      <div class="card rv">
+        <div class="ic">⚒️</div>
+        <h3>Forge new apps by describing them</h3>
+        <p>"Build me a habit tracker." Siren writes the app, live, in front of you — then it's installed on your desktop like it was always there. Publish it to the Marketplace in one click.</p>
+      </div>
+      <div class="card rv">
+        <div class="ic">🖥️</div>
+        <h3>A real Linux shell</h3>
+        <p>Not a simulation. A genuine shell session in the cloud, with a filesystem that persists. Pipe commands, script your workflow, let Siren drive it.</p>
+      </div>
+      <div class="card span2 rv">
+        <div class="ic">💻</div>
+        <h3>Talk to it like a colleague</h3>
+        <p>Open the Siren console anywhere in the OS and just say what you need. She sees your open windows, your files, your context.</p>
+        <div class="code"><span class="c"># you type — anywhere, anytime</span><br><span class="k">siren&gt;</span> <span class="s">summarize the Q3 report and draft a reply to Dana</span><br><span class="c"># siren reads Report-Q3.md, drafts the email, shows you the diff</span><br><span class="k">✓</span> <span class="s">done — review and send when ready</span></div>
+      </div>
+      <div class="card rv">
+        <div class="ic">🧠</div>
+        <h3>Memory that persists</h3>
+        <p>Siren remembers your projects, your preferences, your people. Searchable, pinnable, deletable — a real memory graph, not a context window trick.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ APPS ══════════ -->
+<section class="block" id="apps" style="padding-top:40px">
+  <div class="wrap">
+    <div class="center">
+      <div class="kicker rv">Included</div>
+      <h2 class="rv">60+ apps. Zero installs.</h2>
+      <p class="sub rv">A full suite ships with the OS — and anything missing, Siren forges for you on demand.</p>
+    </div>
+    <div class="apps-grid">
+      <div class="app rv"><div class="glyph">🧠</div><b>HyperIDE</b><span>Full development environment with AI pair-programming.</span></div>
+      <div class="app rv"><div class="glyph">⚒️</div><b>Forge</b><span>Describe an app. Watch it get built live.</span></div>
+      <div class="app rv"><div class="glyph">🌐</div><b>NetRunner</b><span>OSINT research across Hacker News, Reddit and the web.</span></div>
+      <div class="app rv"><div class="glyph">🔐</div><b>Cipher Vault</b><span>Encrypted vault for keys, secrets and credentials.</span></div>
+      <div class="app rv"><div class="glyph">🎨</div><b>RenderWave</b><span>Generative audio-reactive visual worlds.</span></div>
+      <div class="app rv"><div class="glyph">💻</div><b>Terminal</b><span>A real Linux shell in the cloud.</span></div>
+      <div class="app rv"><div class="glyph">🎙️</div><b>Voice</b><span>Talk to Siren. She talks back, naturally.</span></div>
+      <div class="app rv"><div class="glyph">🏪</div><b>Marketplace</b><span>Publish forged apps. Install the community's.</span></div>
+    </div>
+    <p class="apps-more rv">+ 50 more: mail, calendar, kanban, music studio, GBA emulator, RSS, maps…</p>
+  </div>
+</section>
+
+<!-- ══════════ HOW IT WORKS ══════════ -->
+<section class="block" id="how" style="padding-top:40px">
+  <div class="wrap">
+    <div class="kicker rv">How it works</div>
+    <h2 class="rv">Three steps. Sixty seconds.</h2>
+    <div class="steps">
+      <div class="card step rv"><div class="n">01</div><h3>Create your account</h3><p>One email. Your LazySiren Cloud budget is active instantly — even on the free Discovery plan.</p></div>
+      <div class="card step rv"><div class="n">02</div><h3>Boot the OS</h3><p>It opens in a tab: desktop, taskbar, files, 60+ apps. On your phone, grab the Android app.</p></div>
+      <div class="card step rv"><div class="n">03</div><h3>Tell Siren what to do</h3><p>Type or speak. She operates the machine — you supervise what matters.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PLANS ══════════ -->
+<section class="block" id="plans" style="padding-top:40px">
+  <div class="wrap">
+    <div class="center">
+      <div class="kicker rv">Plans</div>
+      <h2 class="rv">Start free.<br>Scale when you're hooked.</h2>
+      <p class="sub rv">Every plan includes the full OS, all 60+ apps, and LazySiren Cloud. You only pay for more intelligence.</p>
+    </div>
+    <div class="plans">
+      <div class="card plan rv">
+        <h3>Discovery</h3><div class="p">$0<small>/mo</small></div>
+        <ul><li>10M Cloud tokens / month</li><li>Full OS + 60+ apps</li><li>1 Marketplace publish / week</li><li>Community support</li></ul>
+        <a class="btn btn-ghost btn-sm" href="https://lazysiren.com">Start free</a>
+      </div>
+      <div class="card plan featured rv">
+        <div class="tag">Most popular</div>
+        <h3>Starter</h3><div class="p">$9.99<small>/mo</small></div>
+        <ul><li>500 Cloud messages / week</li><li>1.5M tokens / week</li><li>5 Marketplace publishes / week</li><li>Priority Cloud queue</li></ul>
+        <a class="btn btn-sm" href="https://lazysiren.com">Choose Starter</a>
+      </div>
+      <div class="card plan rv">
+        <h3>Plus</h3><div class="p">$19.99<small>/mo</small></div>
+        <ul><li>2,000 Cloud messages / week</li><li>6M tokens / week</li><li>15 Marketplace publishes / week</li><li>Priority Cloud queue</li></ul>
+        <a class="btn btn-ghost btn-sm" href="https://lazysiren.com">Choose Plus</a>
+      </div>
+      <div class="card plan rv">
+        <h3>Max</h3><div class="p">$49.99<small>/mo</small></div>
+        <ul><li>7,000 Cloud messages / week</li><li>21M tokens / week</li><li>50 Marketplace publishes / week</li><li>Fastest Cloud queue</li></ul>
+        <a class="btn btn-ghost btn-sm" href="https://lazysiren.com">Choose Max</a>
+      </div>
+      <div class="card plan rv">
+        <h3>Ultra</h3><div class="p">$100<small>/mo</small></div>
+        <ul><li>Unlimited Cloud · fair use</li><li>50M tokens / week cap</li><li>Unlimited publishes</li><li>Direct support line</li></ul>
+        <a class="btn btn-ghost btn-sm" href="https://lazysiren.com">Choose Ultra</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FAQ ══════════ -->
+<section class="block" id="faq" style="padding-top:40px">
+  <div class="wrap">
+    <div class="center">
+      <div class="kicker rv">FAQ</div>
+      <h2 class="rv">Questions, answered.</h2>
+    </div>
+    <div class="faq">
+      <div class="qa rv"><button>Is LazySiren a chatbot?<span class="x">+</span></button><div class="a"><p>No. A chatbot lives in a box and answers questions. LazySiren is a complete operating system — desktop, windows, files, terminal, 60+ apps — where the AI is the operator. It doesn't suggest; it does, where you can watch.</p></div></div>
+      <div class="qa rv"><button>What is LazySiren Cloud?<span class="x">+</span></button><div class="a"><p>Our hosted house AI, included with every account. It powers Siren out of the box — no API key needed. Your plan sets a weekly message/token budget; usage is metered transparently in your account panel.</p></div></div>
+      <div class="qa rv"><button>Do I need my own AI API key?<span class="x">+</span></button><div class="a"><p>No. LazySiren Cloud works immediately. If you prefer, you can plug in your own keys for 14+ providers (OpenAI, Anthropic, Gemini, DeepSeek and more) — they're encrypted per-account and follow you across devices.</p></div></div>
+      <div class="qa rv"><button>Does it run on my phone?<span class="x">+</span></button><div class="a"><p>Yes. LazySiren boots in any modern browser, and there's a native Android app. Your account — memory, keys, files, Cloud budget — follows you everywhere.</p></div></div>
+      <div class="qa rv"><button>Can Siren break things?<span class="x">+</span></button><div class="a"><p>Siren runs on a deny-by-default policy: anything irreversible needs your approval first. Writes are staged, every decision is logged, and you can audit or revoke anytime.</p></div></div>
+      <div class="qa rv"><button>What happens when I cancel?<span class="x">+</span></button><div class="a"><p>You keep your account on the free Discovery plan — the OS, your files and 10M Cloud tokens a month. Nothing is held hostage.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FINAL CTA ══════════ -->
+<div class="wrap final">
+  <div class="final-card rv">
+    <div class="kicker" style="justify-content:center">Ready when you are</div>
+    <h2>Your computer,<br>operated by intelligence.</h2>
+    <p class="sub" style="margin:0 auto">Free to start. No install. No credit card.<br>Boot LazySiren and meet Siren.</p>
+    <div class="hero-cta">
+      <a class="btn btn-lg" href="https://lazysiren.com">Enter LazySiren →</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="#">
+          <svg width="24" height="24" viewBox="0 0 100 100" fill="none"><path d="M50 12 C 30 26, 70 34, 50 48 C 30 62, 70 70, 50 88" stroke="#10b981" stroke-width="9" stroke-linecap="round"/></svg>
+          LazySiren
+        </a>
+        <p>The operating system that is the AI. Designed and built by Palier Labs.</p>
+      </div>
+      <div style="display:flex;gap:64px;flex-wrap:wrap">
+        <div class="fcol"><b>Product</b><a href="#cloud">LazySiren Cloud</a><a href="#os">The OS</a><a href="#apps">Apps</a><a href="#plans">Plans</a></div>
+        <div class="fcol"><b>Company</b><a href="https://lazysiren.com">Enter LazySiren</a><a href="#faq">FAQ</a><a href="https://lazysiren.com">Contact</a></div>
+      </div>
+    </div>
+    <div class="copy"><span>© 2026 Palier Labs. All rights reserved.</span><span>Crafted with ⌁ in Canada</span></div>
+  </div>
+</footer>
+
+<script>
+// ── Siren wave ──
+(function(){
+  const c=document.getElementById('wave'),x=c.getContext('2d');
+  let W,H,t=0;
+  function rs(){W=c.width=c.offsetWidth*devicePixelRatio;H=c.height=c.offsetHeight*devicePixelRatio;}
+  rs();addEventListener('resize',rs);
+  function wave(y0,amp,freq,ph,color,lw,alpha){
+    x.beginPath();
+    for(let i=0;i<=W;i+=4){
+      const u=i/W;
+      const env=Math.sin(Math.PI*u);
+      const y=y0+Math.sin(u*freq*Math.PI*2+t+ph)*amp*env+Math.sin(u*freq*4.7*Math.PI+t*1.6+ph)*amp*.28*env;
+      i?x.lineTo(i,y):x.moveTo(i,y);
+    }
+    x.strokeStyle=color;x.globalAlpha=alpha;x.lineWidth=lw;x.stroke();x.globalAlpha=1;
+  }
+  (function loop(){
+    t+=.028;x.clearRect(0,0,W,H);
+    const cy=H*.5;
+    wave(cy,26*devicePixelRatio,.9,0,'rgba(16,185,129,.14)',7*devicePixelRatio,.5);
+    wave(cy,20*devicePixelRatio,1.4,1.2,'rgba(16,185,129,.3)',3*devicePixelRatio,.7);
+    wave(cy,15*devicePixelRatio,2.1,2.6,'#34d399',1.6*devicePixelRatio,1);
+    requestAnimationFrame(loop);
+  })();
+})();
+// ── Reveal on scroll ──
+(function(){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+})();
+// ── FAQ ──
+document.querySelectorAll('.qa button').forEach(b=>b.addEventListener('click',()=>{
+  const q=b.parentElement,open=q.classList.contains('open'),a=q.querySelector('.a');
+  document.querySelectorAll('.qa.open').forEach(o=>{o.classList.remove('open');o.querySelector('.a').style.maxHeight=null;});
+  if(!open){q.classList.add('open');a.style.maxHeight=a.scrollHeight+'px';}
+}));
+// ── Nav wave draw ──
+(function(){
+  const p=document.getElementById('navWave');if(!p)return;
+  const d=p.getAttribute('d');let i=0;
+  const L=p.getTotalLength();p.style.strokeDasharray=L;p.style.strokeDashoffset=L;
+  (function draw(){i+=.012;const o=L*(1-Math.min(1,i));p.style.strokeDashoffset=o;if(i<1.4)requestAnimationFrame(draw);else{p.style.strokeDasharray='none';}})();
+})();
+</script>
+</body>
+</html>
